@@ -17,5 +17,5 @@ EO-RIPPER.PY is a tool written in Python 2.7 for OSINT investiations of en email
 + Search in pastebin
 + Use it to search for a single email or for a list of emails
 
-# Autor
+# Author
 + Twitter: @JorgeWebsec
