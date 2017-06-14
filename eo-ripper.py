@@ -7,10 +7,22 @@
 #Email: jorge@quantika14.com             ***
 #*******************************************
 
-import re, mechanize, cookielib, json, duckduckgo
+import re, mechanize, cookielib, json, duckduckgo, requests, time, argparse
 from bs4 import BeautifulSoup
 
 emails_list = "emails.txt"
+
+rate = 1.3                            # 1.3 seconds is a safe value that in most cases does not trigger rate limiting
+server = "haveibeenpwned.com"         # Website to contact
+sslVerify = True                      # Verify server certificate (set to False when you use a debugging proxy like BurpSuite)
+proxies = {                           # Proxy to use (debugging)
+#  'http': 'http://127.0.0.1:8080',    # Uncomment when needed
+#  'https': 'http://127.0.0.1:8080',   # Uncomment when needed
+}
+
+address = email
+filename = emails_list
+lstEmail = ["info@example.com","example@example.com]
 
 class colores:
     header = '\033[95m'
@@ -159,6 +171,30 @@ def check_hesidohackeado(email):
 		print colores.green + "|--[INFO][HESIDOHACKEADO][URL][>] " + colores.normal +  str(data["data"][i]["source_url"])
 		print colores.green + "|--[INFO][HESIDOHACKEADO][DETAILS][>] " + colores.normal + str(data["data"][i]["details"])
 
+def check_haveibeenpwned(email):
+	sleep = rate # Reset default acceptable rate
+  	check = requests.get("https://" + server + "/api/v2/breachedaccount/" + email + "?includeUnverified=true",
+                 proxies = proxies,
+                 verify = sslVerify)
+    	if str(check.status_code) == "404": # The address has not been breached.
+        	print OKGREEN + "[i] " + email + " has not been breached." + ENDC
+        	time.sleep(sleep) # sleep so that we don't trigger the rate limit
+        	return False
+    	elif str(check.status_code) == "200": # The address has been breached!
+        	print FAILRED + "[!] " + email + " has been breached!" + ENDC
+        	time.sleep(sleep) # sleep so that we don't trigger the rate limit
+        	return True
+    	elif str(check.status_code) == "429": # Rate limit triggered
+        	print WARNING + "[!] Rate limit exceeded, server instructed us to retry after " + check.headers['Retry-After'] + " seconds" + ENDC
+        	print WARNING + "    Refer to acceptable use of API: https://haveibeenpwned.com/API/v2#AcceptableUse" + ENDC
+        	sleep = float(check.headers['Retry-After']) # Read rate limit from HTTP response headers and set local sleep rate
+        	time.sleep(sleep) # sleeping a little longer as the server instructed us to do
+        	checkAddress(email) # try again
+    	else:
+        	print WARNING + "[!] Something went wrong while checking " + email + ENDC
+        	time.sleep(sleep) # sleep so that we don't trigger the rate limit
+        	return True
+		
 def check_pastebin(email):
 	url = "http://pastebin.com/search?q=" + email.replace(" ", "+")
 	print "|--[INFO][PASTEBIN][SEARCH][>] " + url + "..."
@@ -260,6 +296,7 @@ def attack(email):
 	check_amazon(email,state)
 	check_tumblr(email, state)
 	check_hesidohackeado(email)
+	# check_haveibeenpwned.com(email)
 	check_pastebin(email)
 	check_duckduckgoInfo(email)
 	check_duckduckgoSmartInfo(email)
