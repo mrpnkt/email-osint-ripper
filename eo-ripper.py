@@ -174,11 +174,11 @@ def check_haveibeenpwned(email):
                  proxies = proxies,
                  verify = sslVerify)
     	if str(check.status_code) == "404": # The address has not been breached.
-        	print colores.green + "[i] " + email + " has not been breached."
+        	print colores.green + "|--[INFO][HAVEIBEENPWNED][>] " + colores.normal + email + " has not been breached."
         	time.sleep(sleep) # sleep so that we don't trigger the rate limit
         	return False
     	elif str(check.status_code) == "200": # The address has been breached!
-        	print "[!] " + email + " has been breached!"
+        	print colores.green + "|--[INFO][HAVEIBEENPWNED][>] " + colores.normal + email + " has been breached!"
         	
         	time.sleep(sleep) # sleep so that we don't trigger the rate limit
         	return True
@@ -209,8 +209,7 @@ def check_duckduckgoInfo(email):
 	except:
 		print colores.alert + "|--[WARNING][DUCKDUCKGO][>] Error..." + colores.normal
 
-'''
- def check_duckduckgoSmartInfo(email):
+def check_duckduckgoSmartInfo(email):
 	no_company = ("gmail"," hotmail"," yahoo"," protonmail"," mail")
 	split1 = email.split("@")
 	name = split1[0].replace("."," ")
@@ -231,7 +230,6 @@ def check_duckduckgoInfo(email):
 			print colores.green + "|----[>][POSSIBLE FACEBOOK DETECT] ----" + colores.normal
 		if "soundcloud.com/" in str(link):
 			print colores.green + "|----[>][POSSIBLE SOUNDCLOUD DETECT] ----" + colores.normal
-'''
 
 def banner():
 	print """
@@ -289,16 +287,16 @@ def attack(email):
 			print "[INFO][TARGET][>] " + email
 			print "|--[INFO][EMAIL][>] It's not created..."
 
-	#check_linkedin(email, state)
-	#check_wordpress(email, state)
-	#check_badoo(email, state)
-	#check_amazon(email,state)
-	#check_tumblr(email, state)
-	#check_hesidohackeado(email)
+	check_linkedin(email, state)
+	check_wordpress(email, state)
+	check_badoo(email, state)
+	check_amazon(email,state)
+	check_tumblr(email, state)
+	check_hesidohackeado(email)
 	check_haveibeenpwned(email)
-	#check_pastebin(email)
-	# check_duckduckgoInfo(email)
-	# check_duckduckgoSmartInfo(email)
+	check_pastebin(email)
+	check_duckduckgoInfo(email)
+	check_duckduckgoSmartInfo(email)
 
 def main():
 	global emails_list
