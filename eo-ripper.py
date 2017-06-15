@@ -20,10 +20,6 @@ proxies = {                           # Proxy to use (debugging)
 #  'https': 'http://127.0.0.1:8080',   # Uncomment when needed
 }
 
-# address = email
-# filename = emails_list
-# lstEmail = ["info@example.com","example@example.com]
-
 class colores:
     header = '\033[95m'
     blue = '\033[94m'
@@ -172,6 +168,7 @@ def check_hesidohackeado(email):
 		print colores.green + "|--[INFO][HESIDOHACKEADO][DETAILS][>] " + colores.normal + str(data["data"][i]["details"])
 
 def check_haveibeenpwned(email):
+	#HAVEIBEENPWNED-------------------------------------------------
 	sleep = rate # Reset default acceptable rate
   	check = requests.get("https://" + server + "/api/v2/breachedaccount/" + email + "?includeUnverified=true",
                  proxies = proxies,
@@ -292,14 +289,14 @@ def attack(email):
 			print "[INFO][TARGET][>] " + email
 			print "|--[INFO][EMAIL][>] It's not created..."
 
-	check_linkedin(email, state)
-	check_wordpress(email, state)
-	check_badoo(email, state)
-	check_amazon(email,state)
-	check_tumblr(email, state)
-	check_hesidohackeado(email)
+	#check_linkedin(email, state)
+	#check_wordpress(email, state)
+	#check_badoo(email, state)
+	#check_amazon(email,state)
+	#check_tumblr(email, state)
+	#check_hesidohackeado(email)
 	check_haveibeenpwned(email)
-	check_pastebin(email)
+	#check_pastebin(email)
 	# check_duckduckgoInfo(email)
 	# check_duckduckgoSmartInfo(email)
 
