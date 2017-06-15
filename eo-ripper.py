@@ -20,9 +20,9 @@ proxies = {                           # Proxy to use (debugging)
 #  'https': 'http://127.0.0.1:8080',   # Uncomment when needed
 }
 
-address = email
-filename = emails_list
-lstEmail = ["info@example.com","example@example.com]
+# address = email
+# filename = emails_list
+# lstEmail = ["info@example.com","example@example.com]
 
 class colores:
     header = '\033[95m'
@@ -177,21 +177,22 @@ def check_haveibeenpwned(email):
                  proxies = proxies,
                  verify = sslVerify)
     	if str(check.status_code) == "404": # The address has not been breached.
-        	print OKGREEN + "[i] " + email + " has not been breached." + ENDC
+        	print colores.green + "[i] " + email + " has not been breached."
         	time.sleep(sleep) # sleep so that we don't trigger the rate limit
         	return False
     	elif str(check.status_code) == "200": # The address has been breached!
-        	print FAILRED + "[!] " + email + " has been breached!" + ENDC
+        	print "[!] " + email + " has been breached!"
+        	
         	time.sleep(sleep) # sleep so that we don't trigger the rate limit
         	return True
     	elif str(check.status_code) == "429": # Rate limit triggered
-        	print WARNING + "[!] Rate limit exceeded, server instructed us to retry after " + check.headers['Retry-After'] + " seconds" + ENDC
-        	print WARNING + "    Refer to acceptable use of API: https://haveibeenpwned.com/API/v2#AcceptableUse" + ENDC
+        	print "[!] Rate limit exceeded, server instructed us to retry after " + check.headers['Retry-After'] + " seconds"
+        	print "    Refer to acceptable use of API: https://haveibeenpwned.com/API/v2#AcceptableUse"
         	sleep = float(check.headers['Retry-After']) # Read rate limit from HTTP response headers and set local sleep rate
         	time.sleep(sleep) # sleeping a little longer as the server instructed us to do
         	checkAddress(email) # try again
     	else:
-        	print WARNING + "[!] Something went wrong while checking " + email + ENDC
+        	print WARNING + "[!] Something went wrong while checking " + email
         	time.sleep(sleep) # sleep so that we don't trigger the rate limit
         	return True
 		
@@ -211,7 +212,8 @@ def check_duckduckgoInfo(email):
 	except:
 		print colores.alert + "|--[WARNING][DUCKDUCKGO][>] Error..." + colores.normal
 
-def check_duckduckgoSmartInfo(email):
+'''
+ def check_duckduckgoSmartInfo(email):
 	no_company = ("gmail"," hotmail"," yahoo"," protonmail"," mail")
 	split1 = email.split("@")
 	name = split1[0].replace("."," ")
@@ -221,7 +223,7 @@ def check_duckduckgoSmartInfo(email):
 		data = name
 	else:
 		data = name + " " + company
-	links = duckduckgo.search(data, max_results=10)
+	# links = duckduckgo.search(data, max_results=10)
 	for link in links:
 		print "|--[INFO][DuckDuckGO][SMART SEARCH][>] " + str(link)
 		if "linkedin.com/in/" in str(link):
@@ -232,7 +234,7 @@ def check_duckduckgoSmartInfo(email):
 			print colores.green + "|----[>][POSSIBLE FACEBOOK DETECT] ----" + colores.normal
 		if "soundcloud.com/" in str(link):
 			print colores.green + "|----[>][POSSIBLE SOUNDCLOUD DETECT] ----" + colores.normal
-
+'''
 
 def banner():
 	print """
@@ -296,10 +298,10 @@ def attack(email):
 	check_amazon(email,state)
 	check_tumblr(email, state)
 	check_hesidohackeado(email)
-	# check_haveibeenpwned.com(email)
+	check_haveibeenpwned(email)
 	check_pastebin(email)
-	check_duckduckgoInfo(email)
-	check_duckduckgoSmartInfo(email)
+	# check_duckduckgoInfo(email)
+	# check_duckduckgoSmartInfo(email)
 
 def main():
 	global emails_list
